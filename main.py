@@ -1,3 +1,9 @@
+
+# IMPORTS
+# import os
+# Third party imports
+from PIL import Image  # pip install Pillow
+
 """
 File function description
 
@@ -16,13 +22,6 @@ TODO:
  - convert image to svg (scalable vector graphics)
  - convert svg to set of points connected by lines
 """
-
-# IMPORTS
-import os
-# Third party imports
-from PIL import Image  # pip install Pillow
-
-
 
 # import pypotrace # https://pypi.org/project/pypotrace/ the installation sucks, worth it?
 
@@ -55,7 +54,7 @@ def convert_img_to_svg():
     #1 Pypotrace - the installation sucks
     https://stackoverflow.com/questions/56396804/converting-a-bmp-png-jpeg-to-an-svg-file-using-python
 
-    #2 potrace, imagemagick installed using homebrew sucks
+    #2 pypotrace, imagemagick installed using homebrew sucks
     https://eprev.org/2015/05/27/converting-png-to-svg/
     https://stackoverflow.com/questions/56696496/how-to-convert-jpg-or-png-image-to-svg-and-save-it
 
@@ -78,10 +77,12 @@ def extract_nums(strInput):
     return int(output)
 
 
-def svg_to_gcode():
+def html_frame_plotter(file):
+    xDim = 2
+    yDim = 2
     outGCodeFrame = []
-    numeric = False
-    rawHTML = open('test output1 html5canvas.html', 'r', encoding='utf-8').read()
+    rawHTML = open(file, 'r', encoding='utf-8'
+                   ).read()
     # print(f"rawHTML: \n{rawHTML}")
     listHTML = rawHTML.split("\n")
     # print(f"listHTML: \n{listHTML}")
@@ -109,18 +110,24 @@ def svg_to_gcode():
         else:
             if line == "	ctx.beginPath();":
                 strokeBool = True
-    print(f"outGCodeFrame: \n{outGCodeFrame}")
+    # print(f"outGCodeFrame: \n{outGCodeFrame}")
     tupleList = []
+    moveList = []
     for line in outGCodeFrame:
+        moveList.append(line[0])
         tempTuple = (line.replace("lineTo(", "")
                          .replace("moveTo(", "")
                          .replace(");", ""))
         tupleList.append(tuple(map(float, tempTuple.split(','))))
-    print(tupleList)
+    finalOut = []
+    for counter in range(len(tupleList)):
+        adjustedX = str(tupleList[counter][0] / (xDim / 2) - 1)
+        adjustedY = str(tupleList[counter][1] / (yDim / 2) - 1)
+        currentMove = str(moveList[counter])
+        finalOut.append(currentMove+"("+adjustedX+","+adjustedY+")")
+    return finalOut
 
 
-
-
-
-svg_to_gcode()
-
+thing = html_frame_plotter(r"C:\Users\paulw\PycharmProjects\laser_show_2\test output1 html5canvas.html")
+for x in thing:
+    print(x)
