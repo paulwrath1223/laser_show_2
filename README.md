@@ -1,2 +1,4 @@
-# laser_show_2
-like the first one, but hopefully pyCharm unfucks itself
+# laser_show
+Abandoned
+
+Attempted to convert images to gcode to display via laser light.
